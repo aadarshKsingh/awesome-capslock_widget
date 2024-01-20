@@ -58,17 +58,13 @@ tooltip:add_to_object(capslock)
 
 function capslock:check()
   awful.spawn.with_line_callback(
-    "bash -c 'sleep 0.2 && xset q'",
+     "bash -c 'sleep 0.2 && xset -q | sed -n \"s/^.*Caps Lock:\\s*\\(\\S*\\).*$/\\1/p\"'",
     {
       stdout = function (line)
-        if line:match("Caps Lock") then
-          local status = line:gsub(".*(Caps Lock:%s+)(%a+).*", "%2")
-          tooltip.text = "Caps Lock " .. status
-          if status == "on" then
+        if line:match("on") then
             self.markup = self.activated
-          else
+        else
             self.markup = self.deactivated
-          end
         end
       end
     }
